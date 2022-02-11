@@ -122,6 +122,7 @@ def main():
     print(repr(coords))
     coords = [[1,2], [4,3], [5,6], [8,8]]
     coords = [[1,2], [4,3], [5,6], [8,8], [5,6], [4,1], [2,2]]
+    coords = [[0, 18], [0, 15], [0, 8], [1, 16], [1, 17], [2, 9], [6, 7], [7, 0], [7, 13], [8, 5]] # really slow <- from on here
     tsp(coords)
 
 main()
