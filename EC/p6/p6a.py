@@ -72,9 +72,11 @@ def _2optSwap(existing_route, i, k):
 
 def tsp_ma(coords, iterations):
     existing_route = []
+    intermediate_results = []
     existing_route.extend(coords)
     best_distance = total_distance(existing_route)
     for _ in range(iterations):
+        intermediate_results.append(best_distance)
         for i in range(len(existing_route)-2):
             for k in range(i+2, len(existing_route)-1):
                 new_route = _2optSwap(existing_route, i, k) 
@@ -82,7 +84,7 @@ def tsp_ma(coords, iterations):
                 if new_distance < best_distance:
                     existing_route = new_route
                     best_distance = new_distance
-    return existing_route
+    return existing_route, intermediate_results
 
 def tsp_ea(coords, iterations):
     # cutpoint_start = 1, cutpoint_end = 2
@@ -97,6 +99,7 @@ def tsp_ea(coords, iterations):
     
     parent = []
     parent.extend(coords)
+    intermediate_results = []
     
     for _ in range(iterations):
         z = random.randint(0, len(parent)-2)
@@ -104,13 +107,14 @@ def tsp_ea(coords, iterations):
         offspring = crossover(z,w, parent)
         offspring = mutate(offspring, 0.1)
         parent = es(parent, offspring) # (1 + 1)-ES
+        intermediate_results.append(total_distance(parent))
     
-    return parent
+    return parent, intermediate_results
 
 def sanity_check():
     coords = [[0,0], [10,10], [40,40], [20,20], [30,30]] # sanity check should result 160 instead of 200
-    result_ea = tsp_ea(coords,1500)
-    result_ma = tsp_ma(coords,1500)
+    result_ea, _ = tsp_ea(coords,1500)
+    result_ma, _ = tsp_ma(coords,1500)
     assert(total_distance(result_ea) == 160)
     assert(total_distance(result_ma) == 160)
     assert(total_distance(coords) == 200)
@@ -130,19 +134,14 @@ def main():
     iterations = 1500
     _fig, ax = plt.subplots()
     for _ in range(runs):
-        max_fitnesses_ea = []
-        max_fitnesses_ma = []
-        result_ea = tsp_ea(coords,iterations)
-        result_ma = tsp_ma(coords,iterations)
+        result_ea, intermediate_result_ea = tsp_ea(coords,iterations)
+        result_ma, intermediate_result_ma = tsp_ma(coords,iterations)
         print("Init: ", repr(total_distance(coords)))
         print("EA: ", repr(total_distance(result_ea)))
         print("MA: ", repr(total_distance(result_ma)))
         
-        max_fitnesses_ea.append(total_distance(result_ea))
-        max_fitnesses_ma.append(total_distance(result_ma))
-        
-        ax.plot(list(range(1, iterations+1)), max_fitnesses_ea)
-        ax.plot(list(range(1, iterations+1)), max_fitnesses_ma)
+        ax.plot(list(range(1, iterations+1)), intermediate_result_ea)
+        ax.plot(list(range(1, iterations+1)), intermediate_result_ma)
     
     plt.xlabel('iterations')
     plt.ylabel('fitness')
