@@ -1,6 +1,6 @@
 import itertools
 import random
-
+import functools
 # Fitness function is (1 / distance function)
 # Representation is a permutated list of coords of each city
 # TODO: Crossover, mutation for 6a this is a simple EA algorithm so we choose (1+1)-EC
@@ -20,9 +20,12 @@ def hack(x, coords):
 def print_path( xs ):
     return [ f"{x} -> " for x in xs ]
 
-def fitness(xs):
+def total_distance(xs):
     distances = [ distance(xs[i], xs[hack(i+1, xs)]) for i in range(len(xs))] 
-    total_distance_traveled = sum(distances)
+    return sum(distances)
+
+def fitness(xs):
+    total_distance_traveled = total_distance(xs)
     fitness = 1 / total_distance_traveled
     return fitness
 
@@ -42,22 +45,24 @@ def mutate(xs, chance):
 
 def crossover(cutpoint_start, cutpoint_end, parent):
    xs = []
-   xs_left = parent[:cutpoint_start]
-   xs_right = parent[cutpoint_end-len(parent):]
+   result = []
+   result.extend(parent)
+   xs_left = result[:cutpoint_start]
+   xs_right = result[cutpoint_end-len(result):]
    xs.extend(xs_left)
    xs.extend(xs_right)
-   xs = mutate(xs, 1)
+   xs = mutate(xs, 0.1)
    m_i = 0
-   for i in range(len(parent)):
+   for i in range(len(result)):
         if (i < cutpoint_start or i >= cutpoint_end):
-            parent[i] = xs[m_i]
+            result[i] = xs[m_i]
             m_i = m_i + 1
-   return parent
+   return result
 
 
 def es(parent, offspring):
     if(fitness(parent) < fitness(offspring)):
-      parent = offspring 
+        parent = offspring
     return parent
 
 def tsp(coords):
@@ -72,13 +77,14 @@ def tsp(coords):
     # [(a,b), (c,d), (e,f), (g,h)]
     
     counter = 0
-    parent = coords
-    while counter < 3:
+    parent = []
+    parent.extend(coords)
+    
+    while counter < 10000:
         counter += 1
-        z = random.randint(0, len(coords)-2)
-        w = random.randint(z, len(coords)-1)
-        
-        offspring = crossover(z,w,coords)
+        z = random.randint(0, len(parent)-2)
+        w = random.randint(z, len(parent)-1)
+        offspring = crossover(z,w, parent)
         offspring = mutate(offspring, 0.1)
         parent = es(parent, offspring)
                
@@ -91,8 +97,7 @@ def main():
         w = y.split()
         coords.append([float(i) for i in w])
         
-    print(repr(fitness(coords)))
     result = tsp(coords)
-    print(repr(fitness(result)))
-
+    print(repr(total_distance(coords)))
+    print(repr(total_distance(result)))
 main()
