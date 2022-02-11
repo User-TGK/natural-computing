@@ -60,13 +60,14 @@ def es(parent, offspring):
 def _2optSwap(existing_route, i, k):
    new_route = []
    left_route = []
-   left_route.extend(existing_route[i:])
+   left_route.extend(existing_route[:i+1])
    center_route = []
-   center_route.extend(existing_route[i+1:k])
+   center_route.extend(existing_route[i+1:k+1])
    center_route.reverse()
    right_route = []
    right_route.extend(existing_route[k+1:])
    new_route.extend(left_route)
+   new_route.extend(center_route)
    new_route.extend(right_route)
    return new_route
 
@@ -77,8 +78,8 @@ def tsp_ma(coords, iterations):
     best_distance = total_distance(existing_route)
     while counter < iterations:
         counter += 1
-        for i in range(len(existing_route)-1):
-            for k in range(i+1, len(existing_route)-1):
+        for i in range(len(existing_route)-2):
+            for k in range(i+2, len(existing_route)-1):
                 new_route = _2optSwap(existing_route, i, k) 
                 new_distance = total_distance(new_route)
                 if new_distance < best_distance:
@@ -117,12 +118,12 @@ def main():
     for y in file_in.read().split('\n'):
         w = y.split()
         coords.append([float(i) for i in w])
-        
-    coords = [[0,0], [10,10], [20,20], [30,30], [40,40]]
+    result_ea = tsp_ea(coords,1500)
+    result_ma = tsp_ma(coords,1500)
     
-    result = tsp_ea(coords,100)
-    result = tsp_ma(coords,100)
+    # coords = [[0,0], [10,10], [40,40], [20,20], [30,30]] # sanity check should result 160 instead of 200
     
-    print(repr(total_distance(coords)))
-    print(repr(total_distance(result)))
+    print("Init: ", repr(total_distance(coords)))
+    print("EA: ", repr(total_distance(result_ea)))
+    print("MA: ", repr(total_distance(result_ma)))
 main()
