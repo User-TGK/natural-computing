@@ -110,16 +110,27 @@ def tsp_ea(coords, iterations):
                
     return parent
 
-def main():
+def sanity_check():
+    coords = [[0,0], [10,10], [40,40], [20,20], [30,30]] # sanity check should result 160 instead of 200
+    result_ea = tsp_ea(coords,1500)
+    result_ma = tsp_ma(coords,1500)
+    assert(total_distance(result_ea) == 160)
+    assert(total_distance(result_ma) == 160)
+    assert(total_distance(coords) == 200)
+
+def load_file(fp):
     coords = []
-    file_in = open('file-tsp.txt', 'r')
+    file_in = open(fp, 'r')
     for y in file_in.read().split('\n'):
         w = y.split()
         coords.append([float(i) for i in w])
+    return coords
+
+def main():
+    sanity_check()
+    coords = load_file('file-tsp.txt')
     result_ea = tsp_ea(coords,1500)
     result_ma = tsp_ma(coords,1500)
-    
-    # coords = [[0,0], [10,10], [40,40], [20,20], [30,30]] # sanity check should result 160 instead of 200
     
     print("Init: ", repr(total_distance(coords)))
     print("EA: ", repr(total_distance(result_ea)))
