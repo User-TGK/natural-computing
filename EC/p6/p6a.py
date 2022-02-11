@@ -1,21 +1,17 @@
 import itertools
 import random
 
-
-
 # Fitness function is (1 / distance function)
 # Representation is a permutated list of coords of each city
 # TODO: Crossover, mutation for 6a this is a simple EA algorithm so we choose (1+1)-EC
 # 
 
-coords = [[1,2], [3,4], [2,3], [4,4], (7,7), (10,5), (4,2)]
-goal = 1
 def distance (src, dest):
    x = abs(src[0] - dest[0])
    y = abs(src[1] - dest[1])
    return abs(x + y)
 
-def hack(x):
+def hack(x, coords):
     if x >= len(coords): #to make the round trip
         return 0
     else: 
@@ -25,7 +21,7 @@ def print_path( xs ):
     return [ f"{x} -> " for x in xs ]
 
 def fitness(xs):
-    distances = [ distance(xs[i], xs[hack(i+1)]) for i in range(len(xs))] 
+    distances = [ distance(xs[i], xs[hack(i+1, xs)]) for i in range(len(xs))] 
     total_distance_traveled = sum(distances)
     fitness = 1 / total_distance_traveled
     return fitness
@@ -87,7 +83,7 @@ def print_info(parent1, parent2, fst, snd):
     print(fitness(snd))
     
 
-def tsp():
+def tsp(coords):
     perms = list(itertools.permutations(coords))
     # cutpoint_start = 1, cutpoint_end = 2
     # [(a,b), (c,d), (e,f), (g,h)]
@@ -114,5 +110,18 @@ def tsp():
         parent1 = fst
         parent2 = snd
 
+def main():
+    coords = []
+    file_in = open('file-tsp.txt', 'r')
+    for y in file_in.read().split('\n'):
+        w = y.split()
+        print(repr(w))
+        coords.append([float(i) for i in w])
 
-tsp()
+    coords = [[int(i), int(j)] for [i,j] in coords]  # <- TODO: fix for file
+    print(repr(coords))
+    coords = [[1,2], [4,3], [5,6], [8,8]]
+    coords = [[1,2], [4,3], [5,6], [8,8], [5,6], [4,1], [2,2]]
+    tsp(coords)
+
+main()
