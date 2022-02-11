@@ -36,18 +36,20 @@ def intersection(lst1, lst2):
 def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
     parent1_schema = [ x for i, x in enumerate(parent1) if i < cutpoint_start or i > cutpoint_end]
     parent2_schema = [ x for i, x in enumerate(parent2) if i < cutpoint_start or i > cutpoint_end]
-    parent1_schema.extend(parent2_schema) # create list of possible mutation crossover
+    k = []
+    k.extend(parent1_schema)
+    k.extend(parent2_schema) # create list of possible mutation crossover
     new_k = []
-    for elem in parent1_schema: # remove dups
+    for elem in k: # remove dups
         if elem not in new_k:
            new_k.append(elem)
     perms = list(itertools.permutations(new_k))
     offspring1 = list(parent1)
     offspring2 = list(parent2)
     mutation_counter = cutpoint_end - cutpoint_start - 1
-    x = 1
-    y = 3
-    print(repr(perms))
+    x = 2 # random permutation selection
+    y = 3 # random permuation selection
+    print(repr(parent1_schema))
     for i in range(len(offspring1)):
         if i < cutpoint_start or i > cutpoint_end:
             if list(perms[x][mutation_counter]) not in intersection(offspring1, parent1_schema): 
