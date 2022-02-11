@@ -28,7 +28,11 @@ def fitness(xs):
     total_distance_traveled = sum(distances)
     fitness = 1 / total_distance_traveled
     return fitness
- 
+
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3
+
 def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
     parent1_schema = [ x for i, x in enumerate(parent1) if i < cutpoint_start or i > cutpoint_end]
     parent2_schema = [ x for i, x in enumerate(parent2) if i < cutpoint_start or i > cutpoint_end]
@@ -41,10 +45,15 @@ def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
     offspring1 = list(parent1)
     offspring2 = list(parent2)
     mutation_counter = cutpoint_end - cutpoint_start - 1
+    x = 1
+    y = 3
+    print(repr(perms))
     for i in range(len(offspring1)):
         if i < cutpoint_start or i > cutpoint_end:
-            offspring1[i] = list(perms[0])[mutation_counter]
-            offspring2[i] = list(perms[1])[mutation_counter]
+            if list(perms[x][mutation_counter]) not in intersection(offspring1, parent1_schema): 
+               offspring1[i] = list(perms[x])[mutation_counter]
+            if list(perms[y][mutation_counter]) not in intersection(offspring2, parent2_schema): 
+               offspring2[i] = list(perms[y])[mutation_counter]
             mutation_counter = mutation_counter - 1
     return offspring1, offspring2
 
@@ -64,8 +73,10 @@ def tsp():
     fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
     print("parent:")
     print(print_path(perms[0]))
+    print(fitness(perms[0]))
     print("offspring")
     print(print_path(fst))
+    print(fitness(fst))
     print("parent2:")
     print(print_path(perms[1]))
     print("offspring2:")
