@@ -1,4 +1,5 @@
 import random
+import matplotlib.pyplot as plt
 
 def distance (src, dest):
    x = abs(src[0] - dest[0])
@@ -70,12 +71,14 @@ def _2optSwap(existing_route, i, k):
    return new_route
 
 def tsp_ma(coords, iterations):
-    counter = 0
+    _fig, ax = plt.subplots()
+
+    max_fitnesses = []
     existing_route = []
     existing_route.extend(coords)
     best_distance = total_distance(existing_route)
-    while counter < iterations:
-        counter += 1
+    max_fitnesses.append(best_distance)
+    for _ in range(iterations):
         for i in range(len(existing_route)-2):
             for k in range(i+2, len(existing_route)-1):
                 new_route = _2optSwap(existing_route, i, k) 
@@ -83,6 +86,10 @@ def tsp_ma(coords, iterations):
                 if new_distance < best_distance:
                     existing_route = new_route
                     best_distance = new_distance
+                    max_fitnesses.append(best_distance)
+                    
+    ax.plot(list(range(1, iterations+1)), max_fitnesses)
+    
     return existing_route
 
 def tsp_ea(coords, iterations):
@@ -96,18 +103,25 @@ def tsp_ea(coords, iterations):
     # [(g,h), (c,d), (e,f), (a,b)]
     # [(a,b), (c,d), (e,f), (g,h)]
     
-    counter = 0
+    _fig, ax = plt.subplots()
+    max_fitnesses = []
+    
     parent = []
     parent.extend(coords)
     
-    while counter < iterations:
-        counter += 1
+    for _ in range(iterations):
         z = random.randint(0, len(parent)-2)
         w = random.randint(z, len(parent)-1)
         offspring = crossover(z,w, parent)
         offspring = mutate(offspring, 0.1)
         parent = es(parent, offspring) # (1 + 1)-ES
-               
+        max_fitnesses.append(fitness(parent))
+    
+    ax.plot(list(range(1, iterations+1)), max_fitnesses)
+    
+    plt.xlabel('iterations')
+    plt.ylabel('fitness')
+    plt.show()           
     return parent
 
 def sanity_check():
@@ -125,6 +139,11 @@ def load_file(fp):
         w = y.split()
         coords.append([float(i) for i in w])
     return coords
+
+# For each algorithm (EA and MA), and for each problem instance
+# , provide a figure containing plots average and best fitness against the elapsed number of iterations (1500 iterations) for all 10 runs.
+
+
 
 def main():
     sanity_check()
