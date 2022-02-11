@@ -138,8 +138,8 @@ def main():
         print("EA: ", repr(total_distance(result_ea)))
         print("MA: ", repr(total_distance(result_ma)))
         
-        max_fitnesses_ea.append(result_ea)
-        max_fitnesses_ma.append(result_ma)
+        max_fitnesses_ea.append(total_distance(result_ea))
+        max_fitnesses_ma.append(total_distance(result_ma))
         
         ax.plot(list(range(1, iterations+1)), max_fitnesses_ea)
         ax.plot(list(range(1, iterations+1)), max_fitnesses_ma)
