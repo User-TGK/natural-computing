@@ -60,12 +60,25 @@ def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
     return offspring1, offspring2
 
 
-#def ea(parent1, parent2, step):
-#    if step > 10: return parent1, parent2
-#    offspring1, offspring2 = crossover(parent1, parent2)
-#    ea(offspring1, offspring2)
-#    if fitness(parent1) >= goal: return parent1, parent2 
-#    if fitness(parent2) >= goal: return parent2, parent1
+def ea(parent, offspring):
+    if(fitness(parent) < fitness(offspring)):
+      parent = offspring 
+    return parent
+
+def print_info(parent1, parent2, fst, snd):
+    print("parent:")
+    print(print_path(parent1))
+    print(fitness(parent1))
+    print("offspring")
+    print(print_path(fst))
+    print(fitness(fst))
+    print("parent2:")
+    print(print_path(parent2))
+    print(fitness(parent2))
+    print("offspring2:")
+    print(print_path(snd))
+    print(fitness(snd))
+    
 
 def tsp():
     perms = list(itertools.permutations(coords))
@@ -81,19 +94,15 @@ def tsp():
  
     cutpoint_start = 1
     cutpoint_end = 2
-    fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
-    print("parent:")
-    print(print_path(perms[0]))
-    print(fitness(perms[0]))
-    print("offspring")
-    print(print_path(fst))
-    print(fitness(fst))
-    print("parent2:")
-    print(print_path(perms[1]))
-    print("offspring2:")
-    print(print_path(snd))
+    parent1 = perms[0]
+    parent2 = perms[1]
     
-       
+    fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
+    print_info(parent1,parent2, fst, snd)
+    parent1 = fst
+    parent2 = snd
+    fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
+    print_info(parent1,parent2, fst, snd)
 
 
 tsp()
