@@ -1,4 +1,6 @@
+import itertools
 import random
+from turtle import right
 
 def distance (src, dest):
    x = abs(src[0] - dest[0])
@@ -55,7 +57,36 @@ def es(parent, offspring):
         parent = offspring
     return parent
 
-def tsp_ea(coords):
+def _2optSwap(existing_route, i, k):
+   new_route = []
+   left_route = []
+   left_route.extend(existing_route[i:])
+   center_route = []
+   center_route.extend(existing_route[i+1:k])
+   center_route.reverse()
+   right_route = []
+   right_route.extend(existing_route[k+1:])
+   new_route.extend(left_route)
+   new_route.extend(right_route)
+   return new_route
+
+def tsp_ma(coords, iterations):
+    counter = 0
+    existing_route = []
+    existing_route.extend(coords)
+    best_distance = total_distance(existing_route)
+    while counter < iterations:
+        counter += 1
+        for i in range(len(existing_route)-1):
+            for k in range(i+1, len(existing_route)-1):
+                new_route = _2optSwap(existing_route, i, k) 
+                new_distance = total_distance(new_route)
+                if new_distance < best_distance:
+                    existing_route = new_route
+                    best_distance = new_distance
+    return existing_route
+
+def tsp_ea(coords, iterations):
     # cutpoint_start = 1, cutpoint_end = 2
     # [(a,b), (c,d), (e,f), (g,h)]
     #  ^^^^^  ^^^^^  ^^^^^  ^^^^^
@@ -70,7 +101,7 @@ def tsp_ea(coords):
     parent = []
     parent.extend(coords)
     
-    while counter < 10000:
+    while counter < iterations:
         counter += 1
         z = random.randint(0, len(parent)-2)
         w = random.randint(z, len(parent)-1)
@@ -87,7 +118,11 @@ def main():
         w = y.split()
         coords.append([float(i) for i in w])
         
-    result = tsp_ea(coords)
+    coords = [[0,0], [10,10], [20,20], [30,30], [40,40]]
+    
+    result = tsp_ea(coords,100)
+    result = tsp_ma(coords,100)
+    
     print(repr(total_distance(coords)))
     print(repr(total_distance(result)))
 main()
