@@ -30,37 +30,29 @@ def intersection(lst1, lst2):
     lst3 = [value for value in lst1 if value in lst2]
     return lst3
 
-def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
-    parent1_schema = [ x for i, x in enumerate(parent1) if i < cutpoint_start or i > cutpoint_end]
-    parent2_schema = [ x for i, x in enumerate(parent2) if i < cutpoint_start or i > cutpoint_end]
-    k1 = []
-    k2 = []
-    k1.extend(parent1_schema)
-    k2.extend(parent2_schema) # create list of possible mutation crossover
-    new_k1 = []
-    new_k2 = []
-    for elem in k1: # remove dups
-        if elem not in new_k1:
-           new_k1.append(elem)
-    for elem in k2: # remove dups
-        if elem not in new_k2:
-           new_k2.append(elem)
-    perms1 = list(itertools.permutations(new_k1))
-    perms2 = list(itertools.permutations(new_k2))
-    offspring1 = list(parent1)
-    offspring2 = list(parent2)
-    mutation_counter = cutpoint_end - cutpoint_start - 1
-    x = random.randint(0, len(new_k1)-1) # random permutation selection
-    y = random.randint(0, len(new_k2)-1) # random permuation selection
-    print(repr(parent1_schema))
-    for i in range(len(offspring1)):
-        if i < cutpoint_start or i > cutpoint_end:
-            if list(perms1[x][mutation_counter]) not in intersection(offspring1, parent1_schema): 
-               offspring1[i] = list(perms1[x])[mutation_counter]
-            if list(perms2[y][mutation_counter]) not in intersection(offspring2, parent2_schema): 
-               offspring2[i] = list(perms2[y])[mutation_counter]
-            mutation_counter = mutation_counter - 1
-    return offspring1, offspring2
+def mutate(xs, chance):
+    for i in range(len(xs)):
+        if random.random() < chance:
+            y = xs[i]
+            z = random.randint(0, len(xs)-1)
+            w = xs[z]
+            xs[i] = w
+            xs[z] = y
+    return xs
+
+def crossover(cutpoint_start, cutpoint_end, parent):
+   xs = []
+   xs_left = parent[:cutpoint_start]
+   xs_right = parent[cutpoint_end-len(parent):]
+   xs.extend(xs_left)
+   xs.extend(xs_right)
+   xs = mutate(xs, 1)
+   m_i = 0
+   for i in range(len(parent)):
+        if (i < cutpoint_start or i >= cutpoint_end):
+            parent[i] = xs[m_i]
+            m_i = m_i + 1
+   return parent
 
 
 def ea(parent, offspring):
@@ -68,23 +60,7 @@ def ea(parent, offspring):
       parent = offspring 
     return parent
 
-def print_info(parent1, parent2, fst, snd):
-    print("parent:")
-    print(print_path(parent1))
-    print(fitness(parent1))
-    print("offspring")
-    print(print_path(fst))
-    print(fitness(fst))
-    print("parent2:")
-    print(print_path(parent2))
-    print(fitness(parent2))
-    print("offspring2:")
-    print(print_path(snd))
-    print(fitness(snd))
-    
-
 def tsp(coords):
-    perms = list(itertools.permutations(coords))
     # cutpoint_start = 1, cutpoint_end = 2
     # [(a,b), (c,d), (e,f), (g,h)]
     #  ^^^^^  ^^^^^  ^^^^^  ^^^^^
@@ -94,35 +70,23 @@ def tsp(coords):
     # crossover() can return both
     # [(g,h), (c,d), (e,f), (a,b)]
     # [(a,b), (c,d), (e,f), (g,h)]
- 
-    cutpoint_start = 1
-    cutpoint_end = 2
-    parent1 = perms[0]
-    parent2 = perms[1]
-    
-    count = 5
-
-    fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
-    while(count > 0):
-        count = count - 1
-        print_info(parent1,parent2, fst, snd)
-        fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
-        parent1 = fst
-        parent2 = snd
+    pass
 
 def main():
     coords = []
     file_in = open('file-tsp.txt', 'r')
     for y in file_in.read().split('\n'):
         w = y.split()
-        print(repr(w))
+        # print(repr(w))
         coords.append([float(i) for i in w])
 
-    coords = [[int(i), int(j)] for [i,j] in coords]  # <- TODO: fix for file
+    # coords = [[int(i), int(j)] for [i,j] in coords]  # <- TODO: fix for file
+    # print(repr(coords))
+    # coords = [[1,2], [4,3], [5,6], [8,8]]
+    # coords = [[1,2], [4,3], [5,6], [8,8], [5,6], [4,1], [2,2]]
+    # coords = [[0, 18], [0, 15], [0, 8], [1, 16], [1, 17], [2, 9], [6, 7], [7, 0], [7, 13], [8, 5]] # really slow <- from on here
     print(repr(coords))
-    coords = [[1,2], [4,3], [5,6], [8,8]]
-    coords = [[1,2], [4,3], [5,6], [8,8], [5,6], [4,1], [2,2]]
-    coords = [[0, 18], [0, 15], [0, 8], [1, 16], [1, 17], [2, 9], [6, 7], [7, 0], [7, 13], [8, 5]] # really slow <- from on here
-    tsp(coords)
+    print(repr(crossover(1,3,coords)))
+    # tsp(coords)
 
 main()
