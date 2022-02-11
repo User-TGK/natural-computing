@@ -1,10 +1,6 @@
 import itertools
 import random
 import functools
-# Fitness function is (1 / distance function)
-# Representation is a permutated list of coords of each city
-# TODO: Crossover, mutation for 6a this is a simple EA algorithm so we choose (1+1)-EC
-# 
 
 def distance (src, dest):
    x = abs(src[0] - dest[0])
@@ -65,7 +61,7 @@ def es(parent, offspring):
         parent = offspring
     return parent
 
-def tsp(coords):
+def tsp_ea(coords):
     # cutpoint_start = 1, cutpoint_end = 2
     # [(a,b), (c,d), (e,f), (g,h)]
     #  ^^^^^  ^^^^^  ^^^^^  ^^^^^
@@ -86,7 +82,7 @@ def tsp(coords):
         w = random.randint(z, len(parent)-1)
         offspring = crossover(z,w, parent)
         offspring = mutate(offspring, 0.1)
-        parent = es(parent, offspring)
+        parent = es(parent, offspring) # (1 + 1)-ES
                
     return parent
 
@@ -97,7 +93,7 @@ def main():
         w = y.split()
         coords.append([float(i) for i in w])
         
-    result = tsp(coords)
+    result = tsp_ea(coords)
     print(repr(total_distance(coords)))
     print(repr(total_distance(result)))
 main()
