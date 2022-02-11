@@ -40,10 +40,12 @@ def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
     perms = list(itertools.permutations(new_k))
     offspring1 = list(parent1)
     offspring2 = list(parent2)
+    mutation_counter = cutpoint_end - cutpoint_start - 1
     for i in range(len(offspring1)):
         if i < cutpoint_start or i > cutpoint_end:
-            offspring1[i] = list(perms[0])[0]
-            offspring2[i] = list(perms[1])[1]
+            offspring1[i] = list(perms[0])[mutation_counter]
+            offspring2[i] = list(perms[1])[mutation_counter]
+            mutation_counter = mutation_counter - 1
     return offspring1, offspring2
 
 
