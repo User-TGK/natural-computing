@@ -25,10 +25,6 @@ def fitness(xs):
     fitness = 1 / total_distance_traveled
     return fitness
 
-def intersection(lst1, lst2):
-    lst3 = [value for value in lst1 if value in lst2]
-    return lst3
-
 def mutate(xs, chance):
     for i in range(len(xs)):
         if random.random() < chance:
