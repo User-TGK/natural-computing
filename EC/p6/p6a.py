@@ -55,7 +55,7 @@ def crossover(cutpoint_start, cutpoint_end, parent):
    return parent
 
 
-def ea(parent, offspring):
+def es(parent, offspring):
     if(fitness(parent) < fitness(offspring)):
       parent = offspring 
     return parent
@@ -70,23 +70,29 @@ def tsp(coords):
     # crossover() can return both
     # [(g,h), (c,d), (e,f), (a,b)]
     # [(a,b), (c,d), (e,f), (g,h)]
-    pass
+    
+    counter = 0
+    parent = coords
+    while counter < 3:
+        counter += 1
+        z = random.randint(0, len(coords)-2)
+        w = random.randint(z, len(coords)-1)
+        
+        offspring = crossover(z,w,coords)
+        offspring = mutate(offspring, 0.1)
+        parent = es(parent, offspring)
+               
+    return parent
 
 def main():
     coords = []
     file_in = open('file-tsp.txt', 'r')
     for y in file_in.read().split('\n'):
         w = y.split()
-        # print(repr(w))
         coords.append([float(i) for i in w])
-
-    # coords = [[int(i), int(j)] for [i,j] in coords]  # <- TODO: fix for file
-    # print(repr(coords))
-    # coords = [[1,2], [4,3], [5,6], [8,8]]
-    # coords = [[1,2], [4,3], [5,6], [8,8], [5,6], [4,1], [2,2]]
-    # coords = [[0, 18], [0, 15], [0, 8], [1, 16], [1, 17], [2, 9], [6, 7], [7, 0], [7, 13], [8, 5]] # really slow <- from on here
-    print(repr(coords))
-    print(repr(crossover(1,3,coords)))
-    # tsp(coords)
+        
+    print(repr(fitness(coords)))
+    result = tsp(coords)
+    print(repr(fitness(result)))
 
 main()
