@@ -1,6 +1,4 @@
-import itertools
 import random
-import functools
 
 def distance (src, dest):
    x = abs(src[0] - dest[0])
