@@ -69,7 +69,16 @@ def crossover(cutpoint_start, cutpoint_end, parent1, parent2):
 
 def tsp():
     perms = list(itertools.permutations(coords))
-    
+    # cutpoint_start = 1, cutpoint_end = 2
+    # [(a,b), (c,d), (e,f), (g,h)]
+    #  ^^^^^  ^^^^^  ^^^^^  ^^^^^
+    #  0      1      2      3
+    #         ^^^^^^^^^^^^
+    # permutate on [(a,b), (g,h)]
+    # crossover() can return both
+    # [(g,h), (c,d), (e,f), (a,b)]
+    # [(a,b), (c,d), (e,f), (g,h)]
+ 
     cutpoint_start = 1
     cutpoint_end = 2
     fst, snd = crossover(cutpoint_start, cutpoint_end, perms[0], perms[1]) 
