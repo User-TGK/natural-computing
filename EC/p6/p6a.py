@@ -130,6 +130,7 @@ def load_file(fp):
 def main():
     sanity_check()
     coords = load_file('file-tsp.txt')
+    # coords = load_file('burma14.txt')
     runs = 10
     iterations = 1500
     _fig, ax = plt.subplots()
