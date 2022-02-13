@@ -87,7 +87,7 @@ def eval(individual, points):
 
     return math.fsum(sqerrors),
 
-toolbox.register("evaluate", eval, points=[x/10. for x in range(-10, 10)])
+toolbox.register("evaluate", eval, points=[x/10. for x in range(-10, 11)])
 toolbox.register("select", tools.selTournament, tournsize=2)
 toolbox.register("mate", gp.cxOnePoint)
 
