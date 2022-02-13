@@ -129,23 +129,25 @@ def load_file(fp):
 
 def main():
     sanity_check()
-    coords = load_file('file-tsp.txt')
-    # coords = load_file('burma14.txt')
+    # coords = load_file('file-tsp.txt')
+    coords = load_file('burma14.txt')
     runs = 10
     iterations = 1500
     _fig, ax = plt.subplots()
-    for _ in range(runs):
+    for run in range(runs):
+        coords = mutate(coords,1) # randomize inital ordering of positions of city
         result_ea, intermediate_result_ea = tsp_ea(coords,iterations)
         result_ma, intermediate_result_ma = tsp_ma(coords,iterations)
         print("Init: ", repr(total_distance(coords)))
         print("EA: ", repr(total_distance(result_ea)))
         print("MA: ", repr(total_distance(result_ma)))
         
-        ax.plot(list(range(1, iterations+1)), intermediate_result_ea)
-        ax.plot(list(range(1, iterations+1)), intermediate_result_ma)
+        ax.plot(list(range(1, iterations+1)), intermediate_result_ea, "-b", label="EA {}".format(run))
+        ax.plot(list(range(1, iterations+1)), intermediate_result_ma, "-g", label="MA {}".format(run))
+        plt.legend()
     
     plt.xlabel('iterations')
-    plt.ylabel('fitness')
+    plt.ylabel('total distance')
     plt.show()
         
 main()
