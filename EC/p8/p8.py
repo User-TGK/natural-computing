@@ -14,14 +14,14 @@ ITERATIONS = 50
 CROSSOVER_PROBABILITY = 0.7
 MUTATION_PROBABILITY = 0
 
-
+# Safediv variant
 def div(left, right):
     try:
         return left / right
     except ZeroDivisionError:
         return 1
 
-
+# Safelog variant
 def log(value):
     try:
         return math.log(value)
@@ -80,19 +80,18 @@ values = {
     1.0:  4.0000
 }
 
-
+# Fitness evaluation
 def eval(individual, points):
     func = toolbox.compile(expr=individual)
     sqerrors = ((func(x) - values[x])**2 for x in points)
 
     return math.fsum(sqerrors),
 
-
 toolbox.register("evaluate", eval, points=[x/10. for x in range(-10, 10)])
 toolbox.register("select", tools.selTournament, tournsize=2)
 toolbox.register("mate", gp.cxOnePoint)
 
-
+# Compute statistics
 def stats(population):
     fitnesses = [ind.fitness.values[0] for ind in population]
     lengths = [len(ind) for ind in population]
@@ -110,8 +109,11 @@ def stats(population):
 
     return (avg_fitness, min_fitness, max_fitness, min_length, max_length, avg_length, fittest_length)
 
-
+# Genetic programming, based upon eaSimple
+# https://github.com/DEAP/deap/blob/master/deap/algorithms.py
 def gp_simple(population, cxpb, mutpb, ngen):
+    hof = tools.HallOfFame(1)
+
     logbook = tools.Logbook()
     logbook.header = ['gen', 'avg', 'min', 'max', 'min_length',
                       'max_length', 'avg_length', 'fittest_length']
@@ -122,6 +124,8 @@ def gp_simple(population, cxpb, mutpb, ngen):
 
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
+
+    hof.update(population)
 
     (avg, min, max, min_length, max_length,
      avg_length, fittest_length) = stats(population)
@@ -143,6 +147,8 @@ def gp_simple(population, cxpb, mutpb, ngen):
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
 
+        hof.update(offspring)
+
         # Replace the current population by the offspring
         population[:] = offspring
 
@@ -154,17 +160,18 @@ def gp_simple(population, cxpb, mutpb, ngen):
 
         print(logbook.stream)
 
-    return logbook
+    return logbook, hof
 
 
 def main():
     pop = toolbox.population(n=1000)
 
-    log = gp_simple(pop, CROSSOVER_PROBABILITY,
+    log, hof = gp_simple(pop, CROSSOVER_PROBABILITY,
                     MUTATION_PROBABILITY, ITERATIONS)
 
-    return log
+    print('Best individual throughout evolution with fitness ' + str(hof[0].fitness.values[0]) + ' was: ' + str(hof[0]))
 
+    return log
 
 def plot_a(log):
     fittest_per_iteration = log.select("min")
@@ -199,5 +206,5 @@ def plot_b(log):
 
 if __name__ == "__main__":
     log = main()
-    #plot_a(log)
-    plot_b(log)
+    plot_a(log)
+    # plot_b(log)
