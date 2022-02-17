@@ -4,5 +4,5 @@
 ## Prerequisites
 
 ```bash
-pip install deap
+pip install matplotlib numpy deap
 ```
