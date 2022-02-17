@@ -8,3 +8,6 @@ x2 = [-410, -410]
 x3 = [-415, -415]
 
 print(f(x0))
+print(f(x1))
+print(f(x2))
+print(f(x3))
