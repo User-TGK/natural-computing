@@ -12,19 +12,31 @@ def iris() -> list[list[float]]:
         ]
 
 
+def artificial1() -> list[list[float]]:
+    with open('artificial1.data', 'r') as f:
+        return [
+            [float(x) for x in line.split(',')[:2]]
+            for line in f
+        ]
+
+
 def dist(x: list[float], y: list[float]) -> float:
     return math.sqrt(sum((i - j)**2 for (i, j) in zip(x, y)))
 
 
-def kmeans(Nd: int, No: int, Nc: int, z: list[list[float]]) -> list[int]:
-    zmin = min(min(zp) for zp in z)
-    zmax = max(max(zp) for zp in z)
+def kmeans(Nd: int, No: int, Nc: int, z: list[list[float]], tmax=1000) -> list[int]:
+    """
+    Nd: input dimension
+    No: number of vectors
+    Nc: number of clusters
+    z:  dataset
+    """
 
-    m = [[random.uniform(zmin, zmax) for _ in range(Nd)] for _ in range(Nc)] # centroids
+    m = [random.choice(z) for _ in range(Nc)] # centroids (seeded from the data set)
 
     cluster = [None for _ in range(No)] # mapping of data vector p to cluster j
 
-    for _ in range(1000):
+    for _ in range(tmax):
         for p, zp in enumerate(z):
             jmin = None
             dmin = math.inf
@@ -56,13 +68,9 @@ def kmeans(Nd: int, No: int, Nc: int, z: list[list[float]]) -> list[int]:
 
 
 def main():
-    Nd = 4   # input dimension
-    No = 150 # number of vectors
-    Nc = 3   # number of clusters
+    print(kmeans(Nd=4, No=150, Nc=3, z=iris()))
 
-    z = iris() # data
-
-    print(kmeans(Nd, No, Nc, z))
+    print(kmeans(Nd=2, No=400, Nc=2, z=artificial1()))
 
 
 if __name__ == '__main__':
