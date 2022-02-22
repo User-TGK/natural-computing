@@ -1,6 +1,7 @@
 import random
 import math
 import numpy as np
+import statistics
 
 def iris() -> list[list[float]]:
     with open('iris.data', 'r') as f:
@@ -135,11 +136,25 @@ def pso_clustering(nc, z, t_max, omega, alpha, r):
     return global_best
 
 def main():
-    solution = pso_clustering(nc=3, z=iris(), t_max=100, omega=0.62, alpha=1.49, r=1.0)
+    z_iris = iris()
+    z_artificial1 = artificial1()
 
-    # solution = pso_clustering(nc=2, z=artificial1(), t_max=100, omega=0.55, alpha=1.49, r=1.0)
+    err_iris = []
+    err_artificial1 = []
 
-    print(solution)
+    for _ in range(30):
+        solution = pso_clustering(nc=3, z=z_iris, t_max=100, omega=0.62, alpha=1.49, r=1.0)
+        p = Partical(3, z_iris)
+        p.centroids = solution
+        err_iris.append(p.compute_fitness(solution))
+
+        solution = pso_clustering(nc=2, z=artificial1(), t_max=100, omega=0.55, alpha=1.49, r=1.0)
+        p = Partical(2, z_artificial1)
+        p.centroids = solution
+        err_artificial1.append(p.compute_fitness(solution))
+
+    print('iris\t\t', f'{statistics.mean(err_iris):.3f} {statistics.stdev(err_iris):.3f}')
+    print('artificial1\t', f'{statistics.mean(err_artificial1):.3f} {statistics.stdev(err_artificial1):.3f}')
 
 if __name__ == '__main__':
     main()
