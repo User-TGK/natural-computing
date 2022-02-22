@@ -1,6 +1,8 @@
 import math
 import random
-
+import statistics
+import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -12,12 +14,16 @@ def iris() -> list[list[float]]:
         ]
 
 
-def artificial1() -> list[list[float]]:
+def artificial1() -> tuple[list[list[float]], list[int]]:
     with open('artificial1.data', 'r') as f:
-        return [
-            [float(x) for x in line.split(',')[:2]]
-            for line in f
-        ]
+        z = []
+        ac = []
+        for line in f:
+            z1, z2, c = line.split(',')
+            z.append([float(z1), float(z2)])
+            ac.append(int(c))
+
+        return z, ac
 
 
 def dist(x: list[float], y: list[float]) -> float:
@@ -87,21 +93,59 @@ def quantization_error(z: list[list[float]], m: list[list[float]], cluster: list
 
 
 def main():
-    Nd = 4
-    No = 150
-    Nc = 3
-    z = iris()
-    cluster, m = kmeans(Nd, No, Nc, z)
+    err_iris = []
+    err_artificial1 = []
 
-    print(quantization_error(z, m, cluster))
+    Nd_iris = 4
+    No_iris = 150
+    Nc_iris = 3
+    z_iris = iris()
 
-    Nd = 2
-    No = 400
-    Nc = 2
-    z = artificial1()
-    cluster, m = kmeans(Nd, No, Nc, z)
+    Nd_artificial1 = 2
+    No_artificial1 = 400
+    Nc_artificial1 = 2
+    z_artificial1, ac_artificial1 = artificial1()
 
-    print(quantization_error(z, m, cluster))
+    for _ in range(30):
+        cluster, m = kmeans(Nd_iris, No_iris, Nc_iris, z_iris)
+        err_iris.append(quantization_error(z_iris, m, cluster))
+
+        cluster, m = kmeans(Nd_artificial1, No_artificial1, Nc_artificial1, z_artificial1)
+        err_artificial1.append(quantization_error(z_artificial1, m, cluster))
+
+    print('iris\t\t', f'{statistics.mean(err_iris):.3f} {statistics.stdev(err_iris):.3f}')
+    print('artificial1\t', f'{statistics.mean(err_artificial1):.3f} {statistics.stdev(err_artificial1):.3f}')
+
+    # TODO: visualize iris
+
+    cluster, m = kmeans(Nd_artificial1, No_artificial1, Nc_artificial1, z_artificial1)
+
+    # Color mapping for clusters (0 = red, 1 = blue)
+    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 0., 1.]])
+
+    fig, axes = plt.subplots()
+    plt.xlabel('z1')
+    plt.ylabel('z2')
+
+    # Plot found clusters
+
+    x, y = np.array(z_artificial1).T
+    axes.scatter(x, y, c=cluster, cmap=cmap)
+
+    # Plot found centroids
+
+    mx, my = np.array(m).T
+    axes.plot(mx, my, 'ko')
+
+    # Plot actual clusters
+
+    fig, axes = plt.subplots()
+    plt.xlabel('z1')
+    plt.ylabel('z2')
+
+    axes.scatter(x, y, c=ac_artificial1, cmap=cmap)
+
+    plt.show()
 
 
 if __name__ == '__main__':
