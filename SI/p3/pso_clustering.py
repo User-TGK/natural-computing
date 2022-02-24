@@ -2,6 +2,8 @@ import random
 import math
 import numpy as np
 import statistics
+import matplotlib as mpl
+import matplotlib.pyplot as plt 
 
 def iris() -> list[list[float]]:
     with open('iris.data', 'r') as f:
@@ -135,26 +137,48 @@ def pso_clustering(nc, z, t_max, omega, alpha, r):
     
     return global_best
 
+
 def main():
     z_iris = iris()
     z_artificial1 = artificial1()
 
+    _, ax = plt.subplots()
+    solution: list = pso_clustering(nc=3, z=z_iris, t_max=100, omega=0.62, alpha=1.49, r=1.0)
+    c = []
+    for p in z_iris:
+        for j, m in enumerate(solution):
+            if p in m.points:
+                c.append(j)
+    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
+    z = np.array(z_iris)
+    ax.scatter(z[:,1], z[:,0], c=c, cmap=cmap)
+    plt.show()
+
+    _, ax = plt.subplots()
+    solution = pso_clustering(nc=2, z=z_artificial1, t_max=100, omega=0.55, alpha=1.49, r=1.0)
+    x, y = np.array(solution[0].points).T
+    ax.plot(x, y, 'ro')
+    x, y = np.array(solution[1].points).T
+    ax.plot(x, y, 'bo')
+    plt.show()
+
     err_iris = []
     err_artificial1 = []
 
-    for _ in range(30):
+    for i in range(30):
         solution = pso_clustering(nc=3, z=z_iris, t_max=100, omega=0.62, alpha=1.49, r=1.0)
         p = Partical(3, z_iris)
         p.centroids = solution
         err_iris.append(p.compute_fitness(solution))
 
-        solution = pso_clustering(nc=2, z=artificial1(), t_max=100, omega=0.55, alpha=1.49, r=1.0)
+        solution = pso_clustering(nc=2, z=z_artificial1, t_max=100, omega=0.55, alpha=1.49, r=1.0)
         p = Partical(2, z_artificial1)
         p.centroids = solution
         err_artificial1.append(p.compute_fitness(solution))
 
     print('iris\t\t', f'{statistics.mean(err_iris):.3f} {statistics.stdev(err_iris):.3f}')
     print('artificial1\t', f'{statistics.mean(err_artificial1):.3f} {statistics.stdev(err_artificial1):.3f}')
+
 
 if __name__ == '__main__':
     main()

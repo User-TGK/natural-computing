@@ -149,9 +149,6 @@ def main():
     x, y = np.array(z_artificial1).T
     axes.scatter(x, y, c=cluster, cmap=cmap)
 
-    mx, my = np.array(m).T
-    axes.plot(mx, my, 'ko')
-
     # Plot actual clusters
 
     fig, axes = plt.subplots()
