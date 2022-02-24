@@ -6,12 +6,16 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
-def iris() -> list[list[float]]:
+def iris() -> tuple[list[list[float]], list[int]]:
     with open('iris.data', 'r') as f:
-        return [
-            [float(x) for x in line.split(',')[:4]]
-            for line in f
-        ]
+        z = []
+        ac = []
+        for line in f:
+            data = line.split(',')
+            z.append([float(x) for x in data[:4]])
+            ac.append(int(data[4]))
+
+        return z, ac
 
 
 def artificial1() -> tuple[list[list[float]], list[int]]:
@@ -99,7 +103,7 @@ def main():
     Nd_iris = 4
     No_iris = 150
     Nc_iris = 3
-    z_iris = iris()
+    z_iris, ac_iris = iris()
 
     Nd_artificial1 = 2
     No_artificial1 = 400
@@ -116,23 +120,34 @@ def main():
     print('iris\t\t', f'{statistics.mean(err_iris):.3f} {statistics.stdev(err_iris):.3f}')
     print('artificial1\t', f'{statistics.mean(err_artificial1):.3f} {statistics.stdev(err_artificial1):.3f}')
 
-    # TODO: visualize iris
+    # Found clusters (iris)
 
-    cluster, m = kmeans(Nd_artificial1, No_artificial1, Nc_artificial1, z_artificial1)
-
-    # Color mapping for clusters (0 = red, 1 = blue)
-    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 0., 1.]])
+    cluster, m = kmeans(Nd_iris, No_iris, Nc_iris, z_iris)
+    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
+    fig, axes = plt.subplots()
+    z = np.array(z_iris)
+    axes.scatter(z[:,1], z[:,0], c=cluster, cmap=cmap)
 
     fig, axes = plt.subplots()
     plt.xlabel('z1')
     plt.ylabel('z2')
 
-    # Plot found clusters
+    axes.scatter(z[:,1], z[:,0], c=ac_iris, cmap=cmap)
+
+    # Plot actual clusters
+
+    cluster, m = kmeans(Nd_artificial1, No_artificial1, Nc_artificial1, z_artificial1)
+
+    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 0., 1.]])
+
+    # Found clusters (artificial 1)
+
+    fig, axes = plt.subplots()
+    plt.xlabel('z1')
+    plt.ylabel('z2')
 
     x, y = np.array(z_artificial1).T
     axes.scatter(x, y, c=cluster, cmap=cmap)
-
-    # Plot found centroids
 
     mx, my = np.array(m).T
     axes.plot(mx, my, 'ko')
