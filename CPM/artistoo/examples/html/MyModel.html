@@ -1,0 +1,76 @@
+<!-- Page setup and title -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html;
+charset=UTF-8">
+<title>My single cell</title>
+<style type="text/css"> 
+body{
+    font-family: "HelveticaNeue-Light", sans-serif; padding : 15px;
+}
+</style>
+
+<!-- Sourcing the cpm build -->
+<script src="../../build/artistoo.js"></script>
+<script>
+"use strict"
+
+let config = {
+                ndim : 2,
+                field_size : [100,100],
+                conf : {
+                    T : 20,			// CPM temperature
+                    torus: [true, true],
+                    seed: 2, // random seed
+                    // // Adhesion parameters:
+                    J: [
+                        [0,10, 50],
+                        [0,10, 50],
+                        [0,10, 50]
+                    ] ,
+                    // // VolumeConstraint parameters
+                    LAMBDA_V: [10,50,50],					// VolumeConstraint importance per cellkind
+                    V: [0,300,500],							// Target volume of each cellkind
+                    
+                    // // PerimeterConstraint parameters
+                    LAMBDA_P: [0,2,100],						// PerimeterConstraint importance per cellkind
+                    P : [0,260,0],						// Target perimeter of each cellkind
+                    
+                    // // ActivityConstraint parameters
+                    LAMBDA_ACT : [0,300,0],				// ActivityConstraint importance per cellkind
+                    MAX_ACT : [0,30,0],					// Activity memory duration per cellkind
+                    ACT_MEAN : "geometric"				// Is neighborhood activity computed as a
+											// "geometric" or "arithmetic" mean?
+                },
+                    simsettings : {
+                        NRCELLS : [1,20],
+                        RUNTIME : 500,          
+                        CANVASCOLOR : "eaecef",
+                        CELLCOLOR: ['000000','ffffff'],
+                		ACTCOLOR : [true],					// Should pixel activity values be displayed?
+                        zoom : 4,
+                        SHOWBORDERS: [true],
+                        BORDERCOL: ['000000', '000000']
+                }
+}
+
+let sim;
+function initialize(){
+    sim = new CPM.Simulation( config )
+    step()
+}
+
+
+function step(){
+    sim.step()
+    requestAnimationFrame( step )
+}
+</script>
+</head>
+<body onload="initialize()">
+<h1>Single cell</h1>
+<p>
+My single cell
+</p>
+</body>
+</html>

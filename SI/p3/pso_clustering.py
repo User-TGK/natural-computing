@@ -2,7 +2,8 @@ import random
 import math
 import numpy as np
 import statistics
-
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 def iris() -> list[list[float]]:
     with open('iris.data', 'r') as f:
         return [
@@ -153,6 +154,15 @@ def main():
         p.centroids = solution
         err_artificial1.append(p.compute_fitness(solution))
 
+    solution = pso_clustering(nc=2, z=artificial1(), t_max=100, omega=0.55, alpha=1.49, r=1.0)
+    
+    fig, axes = plt.subplots()
+    cmap = mpl.colors.ListedColormap([[1., 0., 0.], [0., 0., 1.]])
+    axes.scatter(solution[:,1], solution[:,0], c = 100)
+
+    plt.xlabel('z1')
+    plt.ylabel('z2')
+    
     print('iris\t\t', f'{statistics.mean(err_iris):.3f} {statistics.stdev(err_iris):.3f}')
     print('artificial1\t', f'{statistics.mean(err_artificial1):.3f} {statistics.stdev(err_artificial1):.3f}')
 
