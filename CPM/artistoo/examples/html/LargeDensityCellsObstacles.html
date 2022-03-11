@@ -1,0 +1,82 @@
+<!-- Page setup and title -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html;
+charset=UTF-8">
+<title>PageTitle</title>
+<style type="text/css"> 
+body{
+    font-family: "HelveticaNeue-Light", sans-serif; padding : 15px;
+}
+</style>
+
+<!-- Sourcing the cpm build -->
+<script src="../../build/artistoo.js"></script>
+<script>
+"use strict"
+
+let config = {
+
+// Grid settings
+ndim : 2,
+field_size : [200,200],
+
+// CPM parameters and configuration
+conf : {
+    torus : [true, true],
+    SHOWBORDERS : [true,true,true],
+    seed: 1,
+
+    T : 20,			// CPM temperature
+            
+    // Adhesion parameters:
+    J: [ [0, 20, 20], [20, 0, 0], [20, 0, 0] ],
+    
+    // VolumeConstraint parameters
+    LAMBDA_V : [0, 50, 50],	// VolumeConstraint importance per cellkind
+    V : [0, 200, 500],		// Target volume of each cellkind
+    
+    // PerimeterConstraint parameters
+    LAMBDA_P : [0, 2, 100],
+    P: [0, 180, 0],
+
+    // ActivityConstraint parameters
+    LAMBDA_ACT : [0, 200, 0],
+	MAX_ACT : [0, 80, 0],
+    ACT_MEAN : "geometric"
+},
+
+// Simulation setup and configuration
+simsettings : {
+    // Cells on the grid
+    NRCELLS : [10, 20],		// Number of cells to seed for all
+                // non-background cellkinds.
+    RUNTIME : 500,                // Only used in node
+    CANVASCOLOR : "eaecef",
+    CELLCOLOR : ["000000","FFFFFF"],
+    ACTCOLOR : [true,false],
+    
+    zoom : 4		// zoom in on canvas with this factor.
+}
+}
+
+let sim
+function initialize(){
+    sim = new CPM.Simulation( config )
+    step()
+}
+function step(){
+    sim.step()
+    requestAnimationFrame( step )
+}
+
+
+</script>
+</head>
+<body onload="initialize()">
+<h1>Large-density cells and obstacles</h1>
+<p>
+Assignment part two: large-density moving cells with obstacles.
+</p>
+</body>
+</html>
