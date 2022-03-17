@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>My snd model</title>
+<style type="text/css">
+body{
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+		 Helvetica, Arial, "Lucida Grande", sans-serif;
+	 padding : 15px;
+	 max-width: 600px;
+	 margin: auto;
+}
+td {
+	 padding: 10px;
+	 vertical-align: top;
+}
+</style>
+
+
+<script src="./artistoo.js"></script>
+<script src="./fpsmeter.min.js"></script>
+<script>
+"use strict"
+
+/*	----------------------------------
+	CONFIGURATION SETTINGS
+	----------------------------------
+*/
+
+
+let config = {
+
+	// Grid settings
+	ndim : 2,
+	field_size : [300, 200],
+	
+	// CPM parameters and configuration
+	conf : {
+		// Basic CPM parameters
+		seed : 3,							// Seed for random number generation.
+		T : 20,								// CPM temperature
+		torus : [false,false],
+		
+		// Constraint parameters. 
+		// Mostly these have the format of an array in which each element specifies the
+		// parameter value for one of the cellkinds on the grid.
+		// First value is always cellkind 0 (the background) and is often not used.
+
+		
+		// Adhesion parameters:
+		J: [ [0, 20, 20], [20, 0, 0], [20, 0, 0] ],
+
+		
+		// VolumeConstraint parameters
+		LAMBDA_V : [0, 50, 50],	// VolumeConstraint importance per cellkind
+        V : [0, 200, 500],		// Target volume of each cellkind
+    
+		// PerimeterConstraint parameters
+		LAMBDA_P : [0, 2, 100],
+   		 P: [0, 180, 0],
+		
+			   // ActivityConstraint parameters
+		LAMBDA_ACT : [0, 200, 0],
+		MAX_ACT : [0, 80, 0],
+		ACT_MEAN : "geometric"
+		// "geometric" or "arithmetic" mean?
+								
+	},
+	
+	// Simulation setup and configuration: this controls stuff like grid initialization,
+	// runtime, and what the output should look like.
+	simsettings : {
+	
+		// Runtime etc
+		BURNIN : 25,
+		RUNTIME : 1000,
+		RUNTIME_BROWSER : "Inf",
+		
+		NRCELLS : [0,0,0],
+		
+		// Visualization
+		CANVASCOLOR : "CCCCCC", //"eaecef",
+		CELLCOLOR : ["000000","CCCCCC"],
+		ACTCOLOR : [false,false],// Should pixel activity values be displayed?
+		SHOWBORDERS : [true,true],		// Should cellborders be displayed?
+		BORDERCOL : ["DDDDDD","DDDDDD"],
+		zoom : 2,							// zoom in on canvas with this factor.
+	}
+}
+/*	---------------------------------- */
+let sim, meter
+
+
+function initialize(){
+	 /* 	The following functions are defined below and will be added to
+	 	the simulation object. If Custom-methods above is set to false,
+	 	this object is ignored and not used in the html/node files. */
+	 let custommethods = {
+	 	initializeGrid : initializeGrid,
+	 }
+	sim = new CPM.Simulation( config, custommethods )
+
+
+	meter = new FPSMeter({left:"auto", right:"5px"})
+	step()
+}
+
+
+function step(){
+	sim.step()
+	meter.tick()
+	if( sim.conf["RUNTIME_BROWSER"] == "Inf" | sim.time+1 < sim.conf["RUNTIME_BROWSER"] ){
+		requestAnimationFrame( step )
+	}
+}
+
+/* The following custom methods will be added to the simulation object*/
+function initializeGrid(){
+
+	// add the initializer if not already there
+	if( !this.helpClasses["gm"] ){ this.addGridManipulator() }
+
+	let step = 20
+	for( var i = 1 ; i < this.C.extents[0] ; i += step ){
+		for( var j = 1 ; j < this.C.extents[1] ; j += step ){
+			this.gm.seedCellAt( 2, [i ,j ] )
+			this.gm.seedCellAt( 1, [i + 1,j + 1] )
+		}
+	}
+}
+</script>
+</head>
+<body onload="initialize()">
+ 
+ <h1>My snd cell</h1>
+ <p>My snd cell</p>
+</body>
+</html>
