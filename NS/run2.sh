@@ -1,0 +1,2 @@
+java -jar negsel2.jar -alphabet file://syscalls/snd-cert/snd-cert.alpha -self syscalls/snd-cert/snd-cert.train -n 7 -r 4 -c -l -g -k < syscalls/snd-cert/snd-cert.1.anomalous.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-cert/snd-cert.alpha -self syscalls/snd-cert/snd-cert.train -n 7 -r 4 -c -l -g -k < syscalls/snd-cert/snd-cert.1.normal.test | awk '{n+=$1}END{print n/NR}'

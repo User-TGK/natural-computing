@@ -78,9 +78,9 @@ let config = {
 		NRCELLS : [0,0,0],
 		
 		// Visualization
-		CANVASCOLOR : "CCCCCC", //"eaecef",
+		CANVASCOLOR : "CCCCCC", //"eaecef",	
 		CELLCOLOR : ["000000","CCCCCC"],
-		ACTCOLOR : [false,false],// Should pixel activity values be displayed?
+		ACTCOLOR : [true,true],// Should pixel activity values be displayed?
 		SHOWBORDERS : [true,true],		// Should cellborders be displayed?
 		BORDERCOL : ["DDDDDD","DDDDDD"],
 		zoom : 2,							// zoom in on canvas with this factor.
@@ -124,6 +124,9 @@ function initializeGrid(){
 		for( var j = 1 ; j < this.C.extents[1] ; j += step ){
 			this.gm.seedCellAt( 2, [i ,j ] )
 			this.gm.seedCellAt( 1, [i + 1,j + 1] )
+			this.gm.seedCellAt( 1, [i - 1,j + 1] )
+			this.gm.seedCellAt( 1, [i + 1,j - 1] )
+			this.gm.seedCellAt( 1, [i - 1,j - 1] )
 		}
 	}
 }
