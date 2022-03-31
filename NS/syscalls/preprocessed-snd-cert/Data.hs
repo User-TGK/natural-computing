@@ -11,7 +11,11 @@ writeToFile label test l dst = do
  writeFile dst (unlines result)
 
 
-preprocessed fp = do
+preprocessed fp n = do
+ file <- readFile fp
+ writeFile ("preprocessed"++fp) (unlines $ concatMap (substring n) $ lines file)
+
+preprocessed' fp = do
  file <- readFile fp
  let n' = head $ sort (map length (lines file))
  writeFile ("preprocessed"++fp) (unlines $ concatMap (substring n') $ lines file)
