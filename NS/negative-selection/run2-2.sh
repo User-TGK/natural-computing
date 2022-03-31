@@ -1,0 +1,6 @@
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-cert/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.1.normal.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-unm/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.1.anomalous.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-cert/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.2.normal.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-unm/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.2.anomalous.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-cert/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.3.normal.test | awk '{n+=$1}END{print n/NR}'
+java -jar negsel2.jar -alphabet file://syscalls/snd-unm/snd-unm.alpha -self syscalls/snd-unm/snd-unm.train -n 7 -r 4 -c -l -g -k < syscalls/snd-unm/snd-unm.3.anomalous.test | awk '{n+=$1}END{print n/NR}'

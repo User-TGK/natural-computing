@@ -1,2 +1,6 @@
-ghci> writeToFile "snd-cert.1.labels" "snd-cert.1.test" "1" "snd-cert.1.anomalous.test"
-ghci> writeToFile "snd-cert.1.labels" "snd-cert.1.test" "0" "snd-cert.1.normal.test"
+./Main "snd-cert.1.labels" "snd-cert.1.test" "1" "snd-cert.1.anomalous.test"
+./Main "snd-cert.1.labels" "snd-cert.1.test" "0" "snd-cert.1.normal.test"
+./Main "snd-cert.2.labels" "snd-cert.2.test" "1" "snd-cert.2.anomalous.test"
+./Main "snd-cert.2.labels" "snd-cert.2.test" "0" "snd-cert.2.normal.test"
+./Main "snd-cert.3.labels" "snd-cert.3.test" "1" "snd-cert.3.anomalous.test"
+./Main "snd-cert.3.labels" "snd-cert.3.test" "0" "snd-cert.3.normal.test"
